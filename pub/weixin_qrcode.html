@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>weixin_qrcode</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .text {
+            margin-top: 20vh;
+            font-size: 24px;
+        }
+        .translation {
+            margin-top: 1vh;
+            font-size: 15px;
+            color: rgb(67, 67, 67);
+        }
+        .image-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            user-select: none;
+            pointer-events: none;
+        }
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="text"><strong>请使用微信扫码</strong></div>
+    <div class="translation"><strong>Please scan the QR code with WeChat.</strong></div>
+    <div class="image-container">
+        <img src="https://sysyzspublic.github.io/icon/35g117ed.png" alt="居中图片">
+    </div>
+</body>
+</html>
