@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        iframe {
+            border: none;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<title>邵阳市第一中学校园公共服务 | NetworkDisk</title>
+<body>
+<script>
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && (e.key === 'u' || e.key === 'U') || e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+            e.preventDefault();
+            alert('别搞，专心用服务~');
+        }
+    });
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    });
+    document.addEventListener('copy', function(e) {
+        e.preventDefault();
+    });
+</script>
+    <script>
+        function createIframe() {
+            const parts = ['aHR0cA==', 'Oi8v', 'NDcuOTcuMzAuMjAy', 'Og==', 'MTUyNDQ=', 'Lw=='].map(atob);
+            const url = parts.join('');
+            const iframe = document.createElement('iframe');
+            iframe.src = url;
+            iframe.style.border = 'none';
+            iframe.style.width = '100%';
+            iframe.style.height = '100%';
+            document.body.appendChild(iframe);
+        }
+        window.onload = createIframe;
+    </script>
+</body>
+</html>
