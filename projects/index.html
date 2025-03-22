@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>项目列表</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			padding: 20px;
+			background-color: #f5f5f5;
+		}
+
+		.project-container {
+			background: white;
+			border-radius: 8px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			padding: 20px;
+			margin-bottom: 20px;
+			display: flex;
+			align-items: center;
+		}
+
+		.emoji-box {
+			font-size: 32px;
+			margin-right: 20px;
+		}
+
+		.project-info h2 {
+			margin: 0 0 10px 0;
+			color: #333;
+		}
+
+		.project-info p {
+			margin: 0;
+			color: #666;
+		}
+	</style>
+	<style>
+		.project-container {
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+		}
+	</style>
+</head>
+
+<body>
+	<script>
+		document.addEventListener('contextmenu', function (e) {
+			e.preventDefault();
+		});
+
+		document.addEventListener('keydown', function (e) {
+			if (e.ctrlKey && (e.key === 'c' || e.key === 'C' || e.key === 'x' || e.key === 'X')) {
+				e.preventDefault();
+			}
+		});
+	</script>
+	<div class="project-container" onclick="window.location.href='https://sysyzspublic.github.io/shortcuts'">
+		<div class="emoji-box">⌨️</div>
+		<div class="project-info">
+			<h2>键盘快捷键</h2>
+			<p>这是一个键盘快捷键参考页面。</p>
+		</div>
+	</div>
+	<div class="project-container" onclick="window.location.href='https://sysyzspublic.github.io/tabs'">
+		<div class="emoji-box">🏠</div>
+		<div class="project-info">
+			<h2>起始页</h2>
+			<p>此项目没有介绍</p>
+		</div>
+	</div>
+	<div class="project-container" onclick="window.location.href='https://sysyzspublic.github.io/sysyz-gis'">
+		<div class="emoji-box">🗺️</div>
+		<div class="project-info">
+			<h2>校园地图</h2>
+			<p>使用高德地图 API 和 Google Earth 制作的邵阳市第一中学可视化地图服务。</p>
+		</div>
+	</div>
+	<div class="project-container" onclick="window.location.href='https://sysyzspublic.github.io/seewosoftdown'">
+		<div class="emoji-box">📥</div>
+		<div class="project-info">
+			<h2>希沃软件下载</h2>
+			<p>希沃相关教学软件修复和增强插件下载仓库。</p>
+		</div>
+	</div>
+	<div class="project-container" onclick="window.location.href='https://sysyzspublic.github.io/classtools'">
+		<div class="emoji-box">🛠️</div>
+		<div class="project-info">
+			<h2>课堂授课辅助工具</h2>
+			<p>这是一个工具演示页面。</p>
+		</div>
+	</div>
+	<div class="project-container" onclick="window.location.href='https://sysyzspublic.github.io/formulasearch'">
+		<div class="emoji-box">🔍</div>
+		<div class="project-info">
+			<h2>公式查找</h2>
+			<p>一个常用的数学物理化学公式查找页面。</p>
+		</div>
+	</div>
+	</div>
+	<footer
+		style="text-align: center; padding: 20px; background-color: white; margin-top: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+		<p>&copy; <span id="year">2025</span> 邵阳市第一中学校园公共服务 All rights reserved.</p>
+	</footer>
+	<script src="https://sysyz-itcom.github.io/doc/components/js/year.js"></script>
+</body>
+
+</html>
