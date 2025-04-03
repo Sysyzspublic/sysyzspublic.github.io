@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeewoFreeze</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+            margin: 0;
+            padding-top: 100px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        a {
+            text-align: center;
+        }
+
+        body {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>请在电脑打开以下链接</h1>
+    <p><strong>https://allcolor.lanzouw.com/ippdf2sn6i4h</strong></p>
+    <button id="copyButton" style="border-radius: 5px; text-align: center;">复制链接</button>
+    <script>
+        document.getElementById('copyButton').addEventListener('click', function () {
+            const textToCopy = 'https://allcolor.lanzouw.com/ippdf2sn6i4h';
+            const textArea = document.createElement('textarea');
+            textArea.value = textToCopy;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function isMobileDevice() {
+                return (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+            }
+            if (!isMobileDevice()) {
+                document.getElementById('copyButton').style.display = 'none';
+                setTimeout(function() {
+                    if (confirm('您正在使用电脑设备访问，点击确定按钮跳转下载')) {
+                        window.location.href = "https://allcolor.lanzouw.com/ippdf2sn6i4h";
+                    }
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+
+</html>
