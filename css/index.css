@@ -1,0 +1,332 @@
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    @keyframes print {
+      0% {
+        opacity: 0;
+      }
+
+      70% {
+        opacity: 0;
+      }
+
+      75% {
+        opacity: 0.95;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    .prince-website {
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .prince-website .prince {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .prince-website .details {
+      color: #3c3c43;
+      width: 100%;
+    }
+
+    .prince-website .details p {
+      margin: 12px 0;
+      line-height: 30px;
+      font-size: 14px;
+    }
+
+    .prince-website .details p i {
+      margin: 0 3px;
+      background-color: #eff0f3;
+      color: #f4a95b;
+      font-style: normal;
+      padding: 2px 6px;
+      font-size: 13px;
+      border-radius: 4px;
+    }
+
+    .prince-website .details p a {
+      margin: 0 2px;
+      color: #2775b6;
+      font-style: normal;
+      font-size: 13px;
+      border-radius: 4px;
+    }
+
+    .prince-website .details p .important {
+      margin: 0 3px;
+      background-color: #eff0f3;
+      color: #2775b6;
+      font-style: normal;
+      padding: 2px 6px;
+      font-size: 13px;
+      border-radius: 4px;
+    }
+
+    .prince-website .app .container .wrap:hover {
+      box-shadow: 0 0 0 1px inset #2775b6;
+    }
+
+    .prince-website .app .container .wrap .info .info {
+      display: inline-block;
+      color: #65656a;
+      flex-grow: 1;
+      direction: ltr;
+      padding-top: 8px;
+      line-height: 24px;
+      font-size: 14px;
+      font-weight: 500;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+    }
+
+    .prince-website .app .container .wrap .info .title {
+      color: #3c3c43;
+      line-height: 24px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .prince-website .app .container .wrap .icon {
+      width: 48px;
+      height: 48px;
+      background-color: #e7e8ec;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+
+    .prince-website .app {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: 20px;
+      margin-bottom: 150px;
+      position: relative;
+    }
+
+    .prince-website .app::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: mica(10px);
+      z-index: -1;
+    }
+
+    .prince-website .prince .prince-info p::after {
+      content: '_';
+      margin-left: 2px;
+      animation: print 1s infinite;
+    }
+
+    .prince-website .prince .prince-info h1 svg {
+      margin-left: 4px;
+    }
+
+    .prince-website .prince .prince-info .prince-btns button {
+      padding: 10px 22px;
+      border-radius: 980px;
+      border: none;
+      margin-right: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      border: none;
+      background-color: #2775b6;
+      color: #fff;
+    }
+    
+    .prince-website .prince .prince-info p {
+      margin-top: 18px;
+      font-size: 16px;
+      color: #2775b6;
+      width: 380px;
+      height: 24px;
+      text-align: center;
+    }
+
+    .prince-website .prince .prince-info h1 {
+      font-size: 36px;
+      color: rgba(60, 60, 67);
+      display: flex;
+      align-items: center;
+    }
+
+    .prince-website .app .container .wrap {
+      background-color: #f6f6f7;
+      width: 100%;
+      border-radius: 12px;
+      padding: 24px;
+      transition: box-shadow 0.3s ease-in-out;
+    }
+
+    .prince-website .app .container {
+      text-decoration: none;
+    }
+
+    .prince-website .prince .prince-face img {
+      border-radius: 200px;
+    }
+
+    @media screen and (max-width: 640px) {
+      .prince-website {
+        width: 88%;
+      }
+
+      .prince-website .prince {
+        flex-direction: column-reverse;
+        align-items: center;
+        margin: 80px 0 50px;
+        width: 70%;
+      }
+
+      .prince-website .prince .prince-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .prince-website .prince .prince-info h1 {
+        margin-top: 30px;
+      }
+
+      .prince-website .prince .prince-info .prince-btns {
+        margin-top: 32px;
+      }
+
+      .prince-website .prince .prince-info .prince-btns button {
+        margin-right: 10px;
+      }
+
+      .prince-website .prince .prince-face img {
+        max-height: 140px;
+      }
+
+      .prince-website .app .container {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+
+      .prince-website .app .container .wrap {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        align-content: flex-start;
+
+      }
+    }
+
+    @media screen and (min-width: 640px) and (max-width: 959px) {
+      .prince-website {
+        width: 85%;
+      }
+
+      .prince-website .prince {
+        flex-direction: column-reverse;
+        align-items: center;
+        margin: 100px 0 60px;
+        width: 50%;
+      }
+
+      .prince-website .prince .prince-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .prince-website .prince .prince-info h1 {
+        margin-top: 30px;
+      }
+
+      .prince-website .prince .prince-info p {
+        font-size: 18px;
+      }
+
+      .prince-website .prince .prince-info .prince-btns {
+        margin-top: 38px;
+      }
+
+      .prince-website .prince .prince-info .prince-btns button {
+        margin-right: 6px;
+      }
+
+      .prince-website .prince .prince-face img {
+        height: 140px;
+      }
+
+      .prince-website .app .container {
+        width: 50%;
+        padding-right: 15px;
+        display: flex;
+        margin-bottom: 20px;
+      }
+
+      .prince-website .app .container:nth-child(2n) {
+        padding-right: 0;
+      }
+
+      .prince-website .app .container .wrap {
+        display: flex;
+        flex-wrap: wrap;
+        align-content: flex-start;
+      }
+
+      .prince-website .app .container .wrap .icon {
+        margin-right: 10px;
+      }
+    }
+
+    @media screen and (min-width: 960px) {
+      .prince-website {
+        width: 65%;
+      }
+
+      .prince-website .prince {
+        margin: 76px 0 5px;
+        width: 100%;
+      }
+
+      .prince-website .prince .prince-info p {
+        margin-top: 24px;
+        font-size: 18px;
+        text-align: left;
+      }
+
+      .prince-website .prince .prince-info .prince-btns {
+        margin-top: 32px;
+      }
+
+      .prince-website .prince .prince-info .prince-btns button {
+        margin-right: 6px;
+      }
+
+      .prince-website .prince .prince-face img {
+        width: 168px;
+      }
+
+      .prince-website .app .container {
+        flex: 1;
+        padding-right: 15px;
+        display: flex;
+      }
+
+      .prince-website .app .container:last-child {
+        padding-right: 0;
+      }
+    }
