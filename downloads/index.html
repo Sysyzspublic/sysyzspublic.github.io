@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件下载 | SysyzsPublic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0078d4',
+                        secondary: '#60a5fa',
+                        neutral: '#f3f4f6',
+                        dark: '#1f2937',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                },
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .file-row-hover {
+        @apply transition-all duration-200 hover:bg-blue-50 hover:shadow-sm dark:hover:bg-blue-900/30;
+      }
+      .btn-inset {
+        @apply transition-all duration-200 hover:bg-blue-50 hover:shadow-inner dark:hover:bg-blue-800/50;
+      }
+      .text-balance {
+        text-wrap: balance;
+      }
+      .floating-action {
+        @apply fixed bottom-6 right-6 bg-primary text-white rounded-full shadow-lg z-50 transform transition-all duration-300;
+      }
+      .floating-action-hidden {
+        @apply opacity-0 translate-y-10 pointer-events-none;
+      }
+      .floating-action-visible {
+        @apply opacity-100 translate-y-0 pointer-events-auto;
+      }
+      .modal-backdrop {
+        @apply fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity duration-300;
+      }
+      .modal-content {
+        @apply bg-white rounded-lg shadow-xl mx-4 max-w-2xl w-full max-h-[90vh] overflow-hidden transform transition-all duration-300 dark:bg-gray-800;
+      }
+      .modal-enter {
+        @apply opacity-0 scale-95;
+      }
+      .modal-enter-active {
+        @apply opacity-100 scale-100;
+      }
+      .modal-exit {
+        @apply opacity-100 scale-100;
+      }
+      .modal-exit-active {
+        @apply opacity-0 scale-95;
+      }
+      .scrollbar-hidden::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-hidden {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .dark-mode-toggle {
+        @apply relative inline-block w-10 h-5 transition-colors duration-200 ease-in-out;
+      }
+      .dark-mode-toggle input {
+        @apply opacity-0 w-0 h-0;
+      }
+      .dark-mode-toggle-slider {
+        @apply absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-gray-300 rounded-full transition duration-300 ease-in-out dark:bg-gray-700;
+      }
+      .dark-mode-toggle-slider:before {
+        @apply absolute content-[''] h-4 w-4 left-0.5 bottom-0.5 bg-white rounded-full transition duration-300 ease-in-out;
+      }
+      .dark-mode-toggle input:checked + .dark-mode-toggle-slider {
+        @apply bg-primary;
+      }
+      .dark-mode-toggle input:checked + .dark-mode-toggle-slider:before {
+        @apply transform translate-x-5;
+      }
+      .select-node {
+        @apply block w-full px-3 py-2 mt-1 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white dark:border-gray-600;
+      }
+    }
+
+    body {
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -o-user-select: none;
+
+    }
+  </style>
+</head>
+
+<body class="font-inter bg-gray-50 text-gray-800 min-h-screen flex flex-col dark:bg-gray-900 dark:text-gray-100">
+    <!-- 顶部导航栏 -->
+    <header class="bg-white shadow-sm sticky top-0 z-50 dark:bg-gray-800 dark:shadow-gray-700">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo和标题 -->
+                <div class="flex items-center space-x-3">
+                    <div class="text-primary text-2xl">
+                        <i class="fa-solid fa-cloud"></i>
+                    </div>
+                    <h1 class="text-xl font-bold text-dark tracking-wide dark:text-white">SysyzsPublic</h1>
+                </div>
+
+                <!-- 搜索框 -->
+                <div class="hidden md:block flex-grow max-w-md mx-8">
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <i class="fa-solid fa-search text-gray-400 dark:text-gray-500"></i>
+                        </span>
+                        <input id="searchInput" type="text" placeholder="搜索文件和文件夹..."
+                            class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                    </div>
+                </div>
+
+                <!-- 帮助和设置 -->
+                <div class="flex items-center space-x-1">
+                    <button id="helpBtn"
+                        class="btn-inset text-gray-500 hover:text-primary p-2 rounded-md dark:text-gray-400 dark:hover:text-blue-400"
+                        title="帮助">
+                        <i class="fa-solid fa-question-circle"></i>
+                    </button>
+                    <button id="settingsBtn"
+                        class="btn-inset text-gray-500 hover:text-primary p-2 rounded-md dark:text-gray-400 dark:hover:text-blue-400"
+                        title="设置">
+                        <i class="fa-solid fa-cog"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="flex-grow container mx-auto px-4 py-6">
+        <!-- 路径导航 -->
+        <div class="mb-6 text-sm text-gray-500 dark:text-gray-400">
+            <a href="https://sysyzspublic.github.io" class="hover:text-primary dark:hover:text-blue-400">SysyzsPublic</a>
+            <span class="mx-2">/</span>
+            <span class="text-gray-700 dark:text-gray-300">下载站</span>
+        </div>
+
+        <!-- 文件列表 -->
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden dark:bg-gray-800 dark:shadow-gray-700">
+            <!-- 表头 -->
+            <div
+                class="px-4 py-3 border-b border-gray-100 grid grid-cols-12 gap-4 text-sm font-medium text-gray-500 dark:border-gray-700 dark:text-gray-400">
+                <div class="col-span-6 flex items-center">
+                    <input id="selectAll" type="checkbox"
+                        class="mr-3 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary dark:border-gray-600">
+                    <span>名称</span>
+                </div>
+                <div class="col-span-3 hidden md:block">修改日期</div>
+                <div class="col-span-3 hidden md:block">大小</div>
+            </div>
+
+            <!-- 文件行 -->
+            <div id="fileList" class="divide-y divide-gray-100 dark:divide-gray-700">
+                <!-- 文件行将通过JavaScript动态生成 -->
+            </div>
+
+            <!-- 空搜索结果状态 -->
+            <div id="emptySearchState" class="hidden py-16 px-4 text-center">
+                <div class="text-5xl text-gray-200 mb-4 dark:text-gray-700">
+                    <i class="fa-solid fa-search"></i>
+                </div>
+                <h3 class="text-xl font-medium text-gray-700 mb-2 dark:text-gray-300">未找到匹配的文件</h3>
+                <p class="text-gray-500 max-w-md mx-auto mb-4 dark:text-gray-400">尝试使用不同的关键词或检查拼写</p>
+                <button id="clearSearchBtn"
+                    class="btn-effect text-primary hover:underline flex items-center mx-auto dark:text-blue-400">
+                    <i class="fa-solid fa-times-circle mr-1"></i>
+                    <span>清除搜索</span>
+                </button>
+            </div>
+
+            <!-- 空状态 -->
+            <div id="emptyState" class="hidden py-16 px-4 text-center">
+                <div class="text-5xl text-gray-200 mb-4 dark:text-gray-700">
+                    <i class="fa-solid fa-folder-open"></i>
+                </div>
+                <h3 class="text-xl font-medium text-gray-700 mb-2 dark:text-gray-300">这里还没有文件</h3>
+                <p class="text-gray-500 max-w-md mx-auto mb-6 dark:text-gray-400">上传文件到
+                    SysyzsPublic，它们会自动同步到所有设备并在需要时提供给你。</p>
+                <button
+                    class="btn-effect bg-primary text-white px-4 py-2 rounded-md flex items-center space-x-2 mx-auto">
+                    <i class="fa-solid fa-upload"></i>
+                    <span>上传文件</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- 悬浮下载按钮 -->
+    <div id="downloadFloatingBtn" class="floating-action floating-action-hidden">
+        <button id="downloadSelectedBtn" class="btn-effect flex items-center space-x-2 px-6 py-3 rounded-full">
+            <i class="fa-solid fa-download mr-2"></i>
+            <span id="downloadCount">下载 (0)</span>
+        </button>
+    </div>
+
+    <!-- 帮助弹窗 -->
+    <div id="helpModal" class="hidden modal-backdrop items-center justify-center">
+        <div class="modal-content">
+            <div class="p-4 border-b border-gray-100 flex justify-between items-center dark:border-gray-700">
+                <h3 class="text-lg font-medium text-gray-800 dark:text-white">帮助中心</h3>
+                <button id="closeHelpBtn"
+                    class="btn-effect text-gray-500 hover:text-gray-700 p-2 rounded-full dark:text-gray-400 dark:hover:text-gray-300">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="h-[400px] overflow-y-auto scrollbar-hidden pr-2">
+                    <h4 class="text-base font-semibold text-gray-800 mb-2 dark:text-white">文件下载说明</h4>
+                    <p class="text-gray-600 mb-4 dark:text-gray-300">您可以通过以下方式下载文件：</p>
+
+                    <div class="mb-6">
+                        <h5 class="text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">【单个文件下载】</h5>
+                        <p class="text-gray-600 text-sm mb-3 dark:text-gray-300">点击文件名即可开始下载单个文件。</p>
+
+                        <h5 class="text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">【多个文件下载】</h5>
+                        <p class="text-gray-600 text-sm mb-3 dark:text-gray-300">
+                            勾选文件前的复选框选择多个文件，底部会出现下载按钮，点击后会批量下载选中的文件。</p>
+
+                        <h5 class="text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">【全选文件】</h5>
+                        <p class="text-gray-600 text-sm dark:text-gray-300">点击表头的复选框可以快速选择或取消选择所有文件。</p>
+                    </div>
+
+                    <h4 class="text-base font-semibold text-gray-800 mb-2 dark:text-white">文件搜索</h4>
+                    <p class="text-gray-600 mb-4 dark:text-gray-300">使用顶部搜索框可以快速查找文件：</p>
+
+                    <div class="mb-6">
+                        <h5 class="text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">搜索提示</h5>
+                        <ul class="list-disc pl-5 text-gray-600 text-sm space-y-1 dark:text-gray-300">
+                            <li>支持模糊搜索，输入文件名的部分内容即可</li>
+                            <li>搜索结果会实时更新</li>
+                            <li>点击"清除搜索"按钮可以重置搜索结果</li>
+                        </ul>
+                    </div>
+
+                    <h4 class="text-base font-semibold text-gray-800 mb-2 dark:text-white">文件类型说明</h4>
+                    <p class="text-gray-600 mb-4 dark:text-gray-300">系统支持多种文件类型，不同类型的文件会显示不同的图标：</p>
+
+                    <div class="mb-6">
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                            <div class="flex items-center">
+                                <i class="fa-solid fa-file-word text-blue-600 mr-2"></i>
+                                <span class="text-sm text-gray-600 dark:text-gray-300">Word文档</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fa-solid fa-file-excel text-green-600 mr-2"></i>
+                                <span class="text-sm text-gray-600 dark:text-gray-300">Excel表格</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fa-solid fa-file-powerpoint text-red-600 mr-2"></i>
+                                <span class="text-sm text-gray-600 dark:text-gray-300">PowerPoint演示</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fa-solid fa-file-pdf text-red-500 mr-2"></i>
+                                <span class="text-sm text-gray-600 dark:text-gray-300">PDF文档</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fa-solid fa-file-image text-purple-600 mr-2"></i>
+                                <span class="text-sm text-gray-600 dark:text-gray-300">图像文件</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fa-solid fa-file-code text-red-600 mr-2"></i>
+                                <span class="text-sm text-gray-600 dark:text-gray-300">可执行文件</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="text-base font-semibold text-gray-800 mb-2 dark:text-white">常见问题</h4>
+
+                    <div class="space-y-4">
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">【为什么下载速度很慢？】</h5>
+                            <p class="text-gray-600 text-sm dark:text-gray-300">下载速度受网络环境和服务器负载影响，建议在网络状况良好时尝试下载。</p>
+                        </div>
+
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">【为什么下载的文件损坏？】</h5>
+                            <p class="text-gray-600 text-sm dark:text-gray-300">文件损坏可能是由于网络中断导致的，请确保网络连接稳定后重新下载。</p>
+                        </div>
+
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">【技术支持】</h5>
+                            <p class="text-gray-600 text-sm dark:text-gray-300">公共服务邮箱：sysyzspublic@outlook.com<br>社团邮箱：sysyzitcom@163.com<br>微信公众号：<a href="https://sysyzspublic.github.io/pub/weixin_qrcode.html">扫码查看</a></p>
+                        </div>
+                    </div>
+                </div>
+                <p style="align-self: center;">© <span id="year"></span> 邵阳市第一中学信息技术社团</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 设置弹窗 -->
+    <div id="settingsModal" class="hidden modal-backdrop items-center justify-center">
+        <div class="modal-content">
+            <div class="p-4 border-b border-gray-100 flex justify-between items-center dark:border-gray-700">
+                <h3 class="text-lg font-medium text-gray-800 dark:text-white">设置</h3>
+            </div>
+            <div class="p-6">
+                <div class="space-y-6">
+                    <div>
+                        <h4 class="text-base font-medium text-gray-800 mb-3 dark:text-white">下载节点</h4>
+                        <p class="text-sm text-gray-600 mb-2 dark:text-gray-400">选择文件下载的服务器节点</p>
+                        <select id="downloadNode" class="select-node">
+                            <option value="default">Normal</option>
+                            <option value="alternate">Github</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <h4 class="text-base font-medium text-gray-800 mb-3 dark:text-white">外观设置</h4>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h5 class="text-sm font-medium text-gray-700 dark:text-gray-300">深色模式</h5>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">切换到深色主题界面</p>
+                            </div>
+                            <label class="dark-mode-toggle">
+                                <input id="darkModeToggle" type="checkbox">
+                                <span class="dark-mode-toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-t border-gray-100 dark:border-gray-700">
+                <button id="saveSettingsBtn" class="btn-effect bg-primary text-white px-4 py-2 rounded-md float-right">
+                    确定
+                </button>
+                <br>
+                <br>
+            </div>
+        </div>
+    </div>
+    <script src="./files/files.js"></script>
+    <script> 
+        // 用户设置
+        const userSettings = {
+            downloadNode: 'default', // 默认下载节点
+            darkMode: false // 默认浅色模式
+        };
+
+        // 检查本地存储中的设置
+        if (localStorage.getItem('userSettings')) {
+            Object.assign(userSettings, JSON.parse(localStorage.getItem('userSettings')));
+
+            // 应用深色模式设置
+            if (userSettings.darkMode) {
+                document.documentElement.classList.add('dark');
+                document.getElementById('darkModeToggle').checked = true;
+            }
+
+            // 设置下载节点选择
+            document.getElementById('downloadNode').value = userSettings.downloadNode;
+        }
+
+        // 当前显示的文件
+        let currentFiles = [...allFiles];
+        // 选中的文件ID
+        let selectedFileIds = new Set();
+
+        // 渲染文件列表
+        function renderFileList() {
+            const fileListElement = document.getElementById('fileList');
+            const emptyStateElement = document.getElementById('emptyState');
+            const emptySearchStateElement = document.getElementById('emptySearchState');
+
+            if (currentFiles.length === 0) {
+                fileListElement.classList.add('hidden');
+
+                // 根据是否在搜索中显示不同的空状态
+                const searchInput = document.getElementById('searchInput').value.trim();
+                if (searchInput) {
+                    emptySearchStateElement.classList.remove('hidden');
+                    emptyStateElement.classList.add('hidden');
+                } else {
+                    emptySearchStateElement.classList.add('hidden');
+                    emptyStateElement.classList.remove('hidden');
+                }
+                return;
+            }
+
+            fileListElement.classList.remove('hidden');
+            emptyStateElement.classList.add('hidden');
+            emptySearchStateElement.classList.add('hidden');
+
+            fileListElement.innerHTML = '';
+
+            currentFiles.forEach(file => {
+                const fileRow = document.createElement('div');
+                fileRow.className = 'file-row-hover px-4 py-3 grid grid-cols-12 gap-4 items-center';
+                fileRow.setAttribute('data-id', file.id);
+
+                const isSelected = selectedFileIds.has(file.id);
+
+                fileRow.innerHTML = `
+          <div class="col-span-6 flex items-center">
+            <input type="checkbox" class="file-checkbox mr-3 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary dark:border-gray-600" ${isSelected ? 'checked' : ''}>
+            <div class="flex items-center">
+              <div class="${file.color} text-xl mr-3">
+                <i class="fa-solid ${file.icon}"></i>
+              </div>
+              <div>
+                <a href="${file.downloadUrls[userSettings.downloadNode]}" class="text-balance font-medium text-gray-800 hover:text-primary transition-colors download-link dark:text-white dark:hover:text-blue-400" download>
+                  ${file.name}
+                </a>
+                <div class="text-xs text-gray-500 mt-0.5 dark:text-gray-400">${file.type}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-span-3 hidden md:block text-sm text-gray-500 dark:text-gray-400">${file.modified}</div>
+          <div class="col-span-3 hidden md:block text-sm text-gray-500 dark:text-gray-400">${file.size}</div>
+        `;
+
+                fileListElement.appendChild(fileRow);
+            });
+
+            // 防止点击下载链接时文本变色
+            document.querySelectorAll('.download-link').forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const downloadUrl = this.getAttribute('href');
+                    const fileName = this.textContent.trim();
+
+                    // 创建并触发下载
+                    const a = document.createElement('a');
+                    a.href = downloadUrl;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                });
+            });
+
+            // 更新复选框事件监听
+            updateCheckboxListeners();
+            // 更新全选状态
+            updateSelectAllState();
+            // 更新下载按钮状态
+            updateDownloadButton();
+        }
+
+        // 更新复选框事件监听
+        function updateCheckboxListeners() {
+            // 移除旧的事件监听
+            document.querySelectorAll('.file-checkbox').forEach(checkbox => {
+                checkbox.removeEventListener('change', handleFileCheckboxChange);
+            });
+
+            // 添加新的事件监听
+            document.querySelectorAll('.file-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', handleFileCheckboxChange);
+            });
+
+            // 全选复选框事件监听
+            document.getElementById('selectAll').removeEventListener('change', handleSelectAllChange);
+            document.getElementById('selectAll').addEventListener('change', handleSelectAllChange);
+        }
+
+        // 处理文件复选框变化
+        function handleFileCheckboxChange(e) {
+            const checkbox = e.target;
+            const fileRow = checkbox.closest('[data-id]');
+            const fileId = parseInt(fileRow.getAttribute('data-id'));
+
+            if (checkbox.checked) {
+                selectedFileIds.add(fileId);
+            } else {
+                selectedFileIds.delete(fileId);
+            }
+
+            // 更新全选状态
+            updateSelectAllState();
+            // 更新下载按钮状态
+            updateDownloadButton();
+        }
+
+        // 处理全选复选框变化
+        function handleSelectAllChange(e) {
+            const isChecked = e.target.checked;
+
+            // 更新所有文件复选框状态
+            document.querySelectorAll('.file-checkbox').forEach(checkbox => {
+                checkbox.checked = isChecked;
+            });
+
+            // 更新选中的文件ID
+            selectedFileIds.clear();
+            if (isChecked) {
+                currentFiles.forEach(file => {
+                    selectedFileIds.add(file.id);
+                });
+            }
+
+            // 更新下载按钮状态
+            updateDownloadButton();
+        }
+
+        // 更新全选状态
+        function updateSelectAllState() {
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const fileCheckboxes = document.querySelectorAll('.file-checkbox');
+
+            if (fileCheckboxes.length === 0) {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.disabled = true;
+                return;
+            }
+
+            selectAllCheckbox.disabled = false;
+
+            const allChecked = Array.from(fileCheckboxes).every(checkbox => checkbox.checked);
+            const noneChecked = Array.from(fileCheckboxes).every(checkbox => !checkbox.checked);
+
+            selectAllCheckbox.checked = allChecked;
+            selectAllCheckbox.indeterminate = !allChecked && !noneChecked;
+        }
+
+        // 更新下载按钮状态
+        function updateDownloadButton() {
+            const downloadFloatingBtn = document.getElementById('downloadFloatingBtn');
+            const downloadCount = document.getElementById('downloadCount');
+
+            if (selectedFileIds.size > 0) {
+                downloadFloatingBtn.classList.remove('floating-action-hidden');
+                downloadFloatingBtn.classList.add('floating-action-visible');
+                downloadCount.textContent = `下载 (${selectedFileIds.size})`;
+            } else {
+                downloadFloatingBtn.classList.remove('floating-action-visible');
+                downloadFloatingBtn.classList.add('floating-action-hidden');
+            }
+        }
+
+        // 下载选中的文件
+        function downloadSelectedFiles() {
+            if (selectedFileIds.size === 0) {
+                return;
+            }
+
+            const selectedFiles = currentFiles.filter(file => selectedFileIds.has(file.id));
+
+            if (selectedFiles.length === 1) {
+                // 单个文件直接下载
+                const file = selectedFiles[0];
+                const a = document.createElement('a');
+                a.href = file.downloadUrls[userSettings.downloadNode];
+                a.download = file.name;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            } else {
+                // 多个文件依次下载（浏览器可能会阻止多个弹出窗口，这是浏览器安全限制）
+                selectedFiles.forEach((file, index) => {
+                    setTimeout(() => {
+                        const a = document.createElement('a');
+                        a.href = file.downloadUrls[userSettings.downloadNode];
+                        a.download = file.name;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    }, index * 300); // 间隔300毫秒依次下载
+                });
+            }
+        }
+
+        // 搜索文件
+        function searchFiles(keyword) {
+            keyword = keyword.toLowerCase().trim();
+
+            if (!keyword) {
+                // 如果关键词为空，显示所有文件
+                currentFiles = [...allFiles];
+            } else {
+                // 过滤匹配的文件
+                currentFiles = allFiles.filter(file =>
+                    file.name.toLowerCase().includes(keyword)
+                );
+            }
+
+            // 清除选中状态
+            selectedFileIds.clear();
+
+            renderFileList();
+        }
+
+        // 显示帮助弹窗
+        function showHelpModal() {
+            const helpModal = document.getElementById('helpModal');
+            helpModal.classList.remove('hidden');
+            helpModal.classList.add('flex');
+
+            // 添加动画效果
+            setTimeout(() => {
+                const modalContent = helpModal.querySelector('.modal-content');
+                modalContent.classList.add('modal-enter-active');
+            }, 10);
+        }
+
+        // 隐藏帮助弹窗
+        function hideHelpModal() {
+            const helpModal = document.getElementById('helpModal');
+            const modalContent = helpModal.querySelector('.modal-content');
+
+            // 添加退出动画
+            modalContent.classList.remove('modal-enter-active');
+            modalContent.classList.add('modal-exit-active');
+
+            // 动画结束后隐藏
+            setTimeout(() => {
+                helpModal.classList.remove('flex');
+                helpModal.classList.add('hidden');
+                modalContent.classList.remove('modal-exit-active');
+            }, 300);
+        }
+
+        // 显示设置弹窗
+        function showSettingsModal() {
+            const settingsModal = document.getElementById('settingsModal');
+            settingsModal.classList.remove('hidden');
+            settingsModal.classList.add('flex');
+
+            // 添加动画效果
+            setTimeout(() => {
+                const modalContent = settingsModal.querySelector('.modal-content');
+                modalContent.classList.add('modal-enter-active');
+            }, 10);
+        }
+
+        // 保存设置并隐藏设置弹窗
+        function saveSettings() {
+            // 保存下载节点设置
+            userSettings.downloadNode = document.getElementById('downloadNode').value;
+
+            // 保存深色模式设置
+            userSettings.darkMode = document.getElementById('darkModeToggle').checked;
+
+            // 应用深色模式
+            if (userSettings.darkMode) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+
+            // 保存到本地存储
+            localStorage.setItem('userSettings', JSON.stringify(userSettings));
+
+            // 重新渲染文件列表以更新下载链接
+            renderFileList();
+
+            // 隐藏设置弹窗
+            const settingsModal = document.getElementById('settingsModal');
+            const modalContent = settingsModal.querySelector('.modal-content');
+
+            // 添加退出动画
+            modalContent.classList.remove('modal-enter-active');
+            modalContent.classList.add('modal-exit-active');
+
+            // 动画结束后隐藏
+            setTimeout(() => {
+                settingsModal.classList.remove('flex');
+                settingsModal.classList.add('hidden');
+                modalContent.classList.remove('modal-exit-active');
+            }, 300);
+        }
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function () {
+            renderFileList();
+
+            // 移动端搜索框显示
+            const mobileSearchBtn = document.querySelector('.fa-search').parentElement;
+            const searchInput = document.querySelector('input[placeholder="搜索文件和文件夹..."]');
+
+            mobileSearchBtn.addEventListener('click', function () {
+                if (window.innerWidth < 768) {
+                    searchInput.parentElement.classList.toggle('hidden');
+                    searchInput.parentElement.classList.toggle('block');
+                    searchInput.parentElement.classList.toggle('absolute');
+                    searchInput.parentElement.classList.toggle('inset-x-4');
+                    searchInput.parentElement.classList.toggle('top-16');
+                    searchInput.parentElement.classList.toggle('z-50');
+                    searchInput.parentElement.classList.toggle('bg-white');
+                    searchInput.parentElement.classList.toggle('p-4');
+                    searchInput.parentElement.classList.toggle('shadow-md');
+
+                    if (!searchInput.parentElement.classList.contains('hidden')) {
+                        searchInput.focus();
+                    }
+                }
+            });
+
+            // 搜索功能
+            const searchInputElement = document.getElementById('searchInput');
+            searchInputElement.addEventListener('input', function () {
+                searchFiles(this.value);
+            });
+
+            // 清除搜索按钮
+            const clearSearchBtn = document.getElementById('clearSearchBtn');
+            clearSearchBtn.addEventListener('click', function () {
+                searchInputElement.value = '';
+                searchFiles('');
+            });
+
+            // 下载选中文件按钮
+            const downloadSelectedBtn = document.getElementById('downloadSelectedBtn');
+            downloadSelectedBtn.addEventListener('click', downloadSelectedFiles);
+
+            // 帮助弹窗相关
+            const helpBtn = document.getElementById('helpBtn');
+            const closeHelpBtn = document.getElementById('closeHelpBtn');
+
+            helpBtn.addEventListener('click', showHelpModal);
+            closeHelpBtn.addEventListener('click', hideHelpModal);
+
+            // 点击弹窗外部关闭
+            document.getElementById('helpModal').addEventListener('click', function (e) {
+                if (e.target === this) {
+                    hideHelpModal();
+                }
+            });
+
+            // ESC键关闭弹窗
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    hideHelpModal();
+                    if (document.getElementById('settingsModal').classList.contains('flex')) {
+                        saveSettings();
+                    }
+                }
+            });
+
+            // 设置弹窗相关
+            const settingsBtn = document.getElementById('settingsBtn');
+            const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+
+            settingsBtn.addEventListener('click', showSettingsModal);
+            saveSettingsBtn.addEventListener('click', saveSettings);
+
+            // 点击弹窗外部保存设置
+            document.getElementById('settingsModal').addEventListener('click', function (e) {
+                if (e.target === this) {
+                    saveSettings();
+                }
+            });
+
+            // 深色模式切换
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            darkModeToggle.checked = userSettings.darkMode;
+
+            darkModeToggle.addEventListener('change', function () {
+                // 实时预览深色模式变化
+                if (this.checked) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            });
+        });
+
+        // 页脚年份
+        document.getElementById('year').textContent = new Date().getFullYear(); s
+    </script>
+</body>
+
+</html>
