@@ -34,5 +34,17 @@ const cdnFiles = [
         version: "4.4.8",
         type: "JavaScript",
         url: "https://sysyzspublic.github.io/cdn/files/cdn/chart.umd.min.js"
-    }
+    },
+    {
+        name: "Marked",
+        version: "1.1.1",
+        type: "JavaScript",
+        url: "https://sysyzspublic.github.io/cdn/files/cdn/marked.min.js"
+    },
+    {
+        name: "github.min.css",
+        version: "NaN",
+        type: "CSS",
+        url: "https://sysyzspublic.github.io/cdn/files/cdn/github.min.css"
+    },
 ];
