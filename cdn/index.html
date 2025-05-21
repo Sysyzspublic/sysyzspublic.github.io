@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDN | SysyzsPublic</title>
+    <script src="https://sysyzspublic.github.io/css/tailwind.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#0E2E91',
+                        neutral: {
+                            100: '#F5F7FA',
+                            200: '#E4E6EB',
+                            300: '#C9CDD4',
+                            400: '#86909C',
+                            500: '#4E5969',
+                            600: '#272E3B',
+                            700: '#1D2129',
+                        }
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .no-copy {
+                user-select: none;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+            }
+            .link-text {
+                user-select: none;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                pointer-events: none;
+                white-space: pre-wrap;
+                word-break: break-all;
+            }
+        }
+    </style>
+</head>
+
+<body class="font-inter bg-neutral-100 text-neutral-700 no-copy">
+    <!-- 顶部导航栏 -->
+    <header class="bg-white shadow-md fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-server text-primary text-2xl"></i>
+                <h1 class="text-xl font-bold text-neutral-700">CDN 文件列表</h1>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 pt-24 pb-16">
+        <!-- 搜索框 -->
+        <div class="mb-8 bg-white rounded-lg shadow-card p-4 transform hover:shadow-hover transition-all duration-300">
+            <div class="relative">
+                <input type="text" id="search-input" placeholder=""
+                    class="w-full py-3 px-4 pr-10 rounded-lg border border-neutral-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-300">
+                <button
+                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-primary transition-colors duration-300">
+                    <i class="fa-solid fa-search text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 文件列表 -->
+        <div class="bg-white rounded-lg shadow-card overflow-hidden" id="file-list">
+            <ul class="divide-y divide-neutral-200">
+            </ul>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-neutral-700 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="mt-8 pt-6 border-t border-neutral-600 text-center text-neutral-400 text-sm">
+                <p>© <span id="current-year">2025</span> 邵阳市第一中学信息技术社团</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast 通知 -->
+    <div id="toast"
+        class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-primary text-white px-6 py-3 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 flex items-center z-50">
+        <i class="fa-solid fa-check-circle mr-2"></i>
+        <span>已复制</span>
+    </div>
+
+    <script src="./files/files.js"></script>
+    <script>
+        // 生成文件列表
+        function renderFileList(files) {
+            const fileListElement = document.querySelector('#file-list ul');
+            fileListElement.innerHTML = '';
+
+            // 渲染文件列表
+            files.forEach(file => {
+                const listItem = document.createElement('li');
+                listItem.className = 'px-4 py-3 hover:bg-neutral-50 transition-colors duration-200';
+                listItem.innerHTML = `
+                    <div class="flex flex-col gap-2">
+                        <div class="flex items-center">
+                            <h3 class="font-medium text-neutral-700 mr-2">${file.name}</h3>
+                            <span class="px-2 py-0.5 text-xs font-medium rounded-full ${getTypeColor(file.type)}">${file.type}</span>
+                            <span class="ml-auto text-xs text-neutral-400">v${file.version}</span>
+                        </div>
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                            <div class="link-text text-xs text-neutral-600 flex-1">${file.url}</div>
+                            <div class="ml-auto">
+                                <button class="copy-btn bg-primary hover:bg-primary/90 text-white px-2 py-1 rounded text-xs font-medium transition-colors duration-200" 
+                                    data-url="${file.url}">
+                                    <i class="fa-solid fa-copy mr-1"></i> 复制
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                fileListElement.appendChild(listItem);
+            });
+
+            // 添加复制事件监听
+            document.querySelectorAll('.copy-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const url = button.getAttribute('data-url');
+                    copyToClipboard(url);
+                });
+            });
+        }
+
+        // 根据类型获取颜色
+        function getTypeColor(type) {
+            const colors = {
+                'CSS': 'bg-blue-100 text-blue-800',
+                'JavaScript': 'bg-yellow-100 text-yellow-800',
+                '字体': 'bg-purple-100 text-purple-800',
+                '图标': 'bg-green-100 text-green-800'
+            };
+            return colors[type] || 'bg-gray-100 text-gray-800';
+        }
+
+        // 复制到剪贴板
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast();
+            }).catch(err => {
+                console.error('复制失败: ', err);
+            });
+        }
+
+        // 显示Toast通知
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.add('opacity-100');
+            toast.classList.remove('opacity-0');
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+                toast.classList.remove('opacity-100');
+            }, 2000);
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 设置当前年份
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+
+            renderFileList(cdnFiles);
+
+            // 搜索功能
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const filteredFiles = cdnFiles.filter(file =>
+                    file.name.toLowerCase().includes(searchTerm) ||
+                    file.type.toLowerCase().includes(searchTerm) ||
+                    file.version.toLowerCase().includes(searchTerm)
+                );
+                renderFileList(filteredFiles);
+            });
+
+            // 导航栏滚动效果
+            window.addEventListener('scroll', () => {
+                const header = document.querySelector('header');
+                if (window.scrollY > 10) {
+                    header.classList.add('py-2', 'shadow-lg');
+                    header.classList.remove('py-3', 'shadow-md');
+                } else {
+                    header.classList.add('py-3', 'shadow-md');
+                    header.classList.remove('py-2', 'shadow-lg');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
